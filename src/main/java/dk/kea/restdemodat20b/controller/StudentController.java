@@ -27,4 +27,13 @@ public class StudentController {
         studentRepository.findAll().forEach(students::add);
         return ResponseEntity.status(HttpStatus.OK).body(students);
     }
+
+    //HTTP GET (/students/{id}) - findById
+
+    //HTTP Post (/students)) - create
+
+    //HTTP Put (/students/{id}) - update
+
+    //HTTP Delete (/students/{id}) - delete
+
 }
