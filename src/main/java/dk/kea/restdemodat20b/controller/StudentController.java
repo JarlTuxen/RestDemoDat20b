@@ -4,10 +4,7 @@ import dk.kea.restdemodat20b.model.Student;
 import dk.kea.restdemodat20b.repository.StudentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +46,18 @@ public class StudentController {
     }
 
     //HTTP Post (/students)) - create
+    @CrossOrigin(origins = "*", exposedHeaders = "Location")
+    @PostMapping(value = "" )
+    public ResponseEntity<Student> create(@RequestBody Student student){
+        //opret ny student i JPA
+        Student newStudent = studentRepository.save(student);
+
+        //location header: /students/{id}
+        //"location", "/students/" + newStudent.getId()
+        //HttpStatus.CREATED 201
+
+        return ResponseEntity.status(HttpStatus.CREATED).header("Location", "/students/" + newStudent.getId()).body(newStudent);
+    }
 
     //HTTP Put (/students/{id}) - update
 
