@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+//restcontroller arbejder på /students
 @RequestMapping("/students")
 @RestController
 public class StudentController {
@@ -47,8 +48,13 @@ public class StudentController {
 
     //HTTP Post (/students)) - create
     @CrossOrigin(origins = "*", exposedHeaders = "Location")
-    @PostMapping(value = "" )
+    @PostMapping
     public ResponseEntity<Student> create(@RequestBody Student student){
+
+        //hvis id sat, så returner BAD_REQUEST
+        if (student.getId()!=null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         //opret ny student i JPA
         Student newStudent = studentRepository.save(student);
 
@@ -60,7 +66,40 @@ public class StudentController {
     }
 
     //HTTP Put (/students/{id}) - update
+    @PutMapping("/{id}")
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Student student){
+        //findes den studerende?
+        Optional<Student> optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isPresent()){
+            //er path id og student object id identiske? ellers returner BAD_REQUEST
+            if (id.equals(student.getId())){
+                //stud findes så opdater
+                student.setId(id);
+                studentRepository.save(student);
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+            else{
+                //forskel på path id og student object id
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
     //HTTP Delete (/students/{id}) - delete
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        Optional<Student> optionalStudent = studentRepository.findById(id);
+        if (optionalStudent.isPresent()){
+            studentRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        else{
+            //not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
 }
