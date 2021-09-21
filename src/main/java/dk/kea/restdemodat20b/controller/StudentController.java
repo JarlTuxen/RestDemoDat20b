@@ -46,7 +46,7 @@ public class StudentController {
         }
     }
 
-    //HTTP Post (/students)) - create
+    //HTTP Post (/students) - create
     @CrossOrigin(origins = "*", exposedHeaders = "Location")
     @PostMapping
     public ResponseEntity<Student> create(@RequestBody Student student){
