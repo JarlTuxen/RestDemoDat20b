@@ -1,6 +1,8 @@
 package dk.kea.restdemodat20b.controller;
 
+import dk.kea.restdemodat20b.model.Assignment;
 import dk.kea.restdemodat20b.model.Student;
+import dk.kea.restdemodat20b.repository.AssignmentRepository;
 import dk.kea.restdemodat20b.repository.StudentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,12 @@ import java.util.Optional;
 public class StudentController {
 
     private StudentRepository studentRepository;
+    private AssignmentRepository assignmentRepository;
 
     //constructor injection i stedet for field injection (autowired)
-    public StudentController(StudentRepository studentRepository) {
+    public StudentController(StudentRepository studentRepository, AssignmentRepository assignmentRepository) {
         this.studentRepository = studentRepository;
+        this.assignmentRepository = assignmentRepository;
     }
 
     //HTTP GET (/students)
@@ -57,6 +61,12 @@ public class StudentController {
         }
         //opret ny student i JPA
         Student newStudent = studentRepository.save(student);
+
+        //brug id fra newStudent til at sætte foreignkey i assignments
+        for (Assignment assignment : newStudent.getAssignments()){
+            assignment.setStudent(newStudent);
+            assignmentRepository.save(assignment);
+        }
 
         //location header: /students/{id}
         String location = "/students/" + newStudent.getId();
