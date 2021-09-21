@@ -53,16 +53,17 @@ public class StudentController {
 
         //hvis id sat, så returner BAD_REQUEST
         if (student.getId()!=null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         //opret ny student i JPA
         Student newStudent = studentRepository.save(student);
 
         //location header: /students/{id}
-        //"location", "/students/" + newStudent.getId()
-        //HttpStatus.CREATED 201
+        String location = "/students/" + newStudent.getId();
 
-        return ResponseEntity.status(HttpStatus.CREATED).header("Location", "/students/" + newStudent.getId()).body(newStudent);
+        //HTTPStatus Created 201
+        return ResponseEntity.status(HttpStatus.CREATED).header("Location", location)
+                .body(newStudent);
     }
 
     //HTTP Put (/students/{id}) - update
@@ -74,7 +75,7 @@ public class StudentController {
             //er path id og student object id identiske? ellers returner BAD_REQUEST
             if (id.equals(student.getId())){
                 //stud findes så opdater
-                student.setId(id);
+                //student.setId(id);
                 studentRepository.save(student);
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
